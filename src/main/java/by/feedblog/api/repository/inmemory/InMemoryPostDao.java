@@ -102,6 +102,7 @@ public class InMemoryPostDao implements PostDao {
     @Override
     public List<Post> getAllChecked() {
         List<Post> postList = new ArrayList<>();
+        System.out.println("Hello");
         for (Post post : posts) {
             if (post.isChecked()) {
                 postList.add(post);
