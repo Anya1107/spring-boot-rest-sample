@@ -4,100 +4,57 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseDataSource;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.util.Date;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "posts")
 public class Post implements Comparable<Post> {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotBlank
-    @Length(min = 3)
+    @Length(min = 3, max = 10)
     private String title;
 
     @NotBlank
-    @Length(min = 4)
+    @Length(min = 4, max = 100)
     private String description;
 
+    @OneToOne
     private Category category;
 
-    private Tag tag;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Tag> tag;
 
+    @OneToOne
     private User user;
-    private Comment moderComment;
+
+//    @OneToOne
+//    private Comment moderComment;
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Comment> comments;
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Like> likes;
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Dislike> dislikes;
+
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Reaction> reactions;
+
     private boolean isChecked = false;
+
     private Date date;
-
-    public Post(String title, String description, Category category, Tag tag, User user, Date date) {
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.tag = tag;
-        this.user = user;
-        this.date = date;
-    }
-
-    public Post(String title, String description, Category category, Tag tag, User user, Comment moderComment, List<Comment> comments, boolean isChecked, Date date) {
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.tag = tag;
-        this.user = user;
-        this.moderComment = moderComment;
-        this.comments = comments;
-        this.isChecked = isChecked;
-        this.date = date;
-    }
-
-    public Post(String title, String description, Category category, Tag tag, User user, List<Comment> comments, boolean isChecked) {
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.tag = tag;
-        this.user = user;
-        this.isChecked = isChecked;
-    }
-
-    public Post(String title, String description, Category category, Tag tag, User user, List<Comment> comments, boolean isChecked, List<Like> likes, List<Dislike> dislikes) {
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.tag = tag;
-        this.user = user;
-        this.isChecked = isChecked;
-    }
-
-    public Post(int id, String title, String description, Category category, Tag tag, User user, boolean isChecked, Date date) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.tag = tag;
-        this.user = user;
-        this.isChecked = isChecked;
-        this.date = date;
-    }
-
-    public Post(String title, String description,Category category, Tag tag, User user, boolean isChecked, Date date) {
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.tag = tag;
-        this.user = user;
-        this.isChecked = isChecked;
-        this.date = date;
-    }
 
     @Override
     public int compareTo(Post o) {

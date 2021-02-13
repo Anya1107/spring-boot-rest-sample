@@ -1,12 +1,11 @@
-package by.feedblog.api.repository.inmemory;
+package by.feedblog.api.dao.inmemory;
 
 import by.feedblog.api.entity.*;
-import by.feedblog.api.repository.PostDao;
+import by.feedblog.api.dao.PostDao;
 import org.springframework.stereotype.Repository;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -79,48 +78,24 @@ public class InMemoryPostDao implements PostDao {
 
     @Override
     public List<Post> getAllByTag(Tag tag) {
-        List<Post> postList = new ArrayList<>();
-        for (Post post : posts) {
-            if (post.getTag().equals(tag)) {
-                postList.add(post);
-            }
-        }
-        return postList;
+//        List<Post> postList = new ArrayList<>();
+//        for (Post post : posts) {
+//            if (post.getTag().equals(tag)) {
+//                postList.add(post);
+//            }
+//        }
+        return null;
     }
 
     @Override
     public List<Post> getAllByCategory(Category category) {
-        List<Post> postList = new ArrayList<>();
-        for (Post post : posts) {
-            if (post.getCategory().equals(category)) {
-                postList.add(post);
-            }
-        }
-        return postList;
-    }
-
-    @Override
-    public List<Post> getAllChecked() {
-        List<Post> postList = new ArrayList<>();
-        System.out.println("Hello");
-        for (Post post : posts) {
-            if (post.isChecked()) {
-                postList.add(post);
-                postList.sort(Collections.reverseOrder());
-            }
-        }
-        return postList;
-    }
-
-    @Override
-    public List<Post> getAllUnchecked() {
-        List<Post> postList = new ArrayList<>();
-        for (Post post : posts) {
-            if (!post.isChecked()) {
-                postList.add(post);
-            }
-        }
-        return postList;
+//        List<Post> postList = new ArrayList<>();
+//        for (Post post : posts) {
+//            if (post.getCategory().equals(category)) {
+//                postList.add(post);
+//            }
+//        }
+        return null;
     }
 
     @Override
@@ -155,22 +130,22 @@ public class InMemoryPostDao implements PostDao {
 
     @Override
     public void updateTag(int id, Tag tag) {
-        for (Post post : posts) {
-            if (post.getId() == id) {
-                post.setTag(tag);
-                post.setChecked(false);
-            }
-        }
+//        for (Post post : posts) {
+//            if (post.getId() == id) {
+//                post.setTag(tag);
+//                post.setChecked(false);
+//            }
+//        }
     }
 
     @Override
     public void updateCategory(int id, Category category) {
-        for (Post post : posts) {
-            if (post.getId() == id) {
-                post.setCategory(category);
-                post.setChecked(false);
-            }
-        }
+//        for (Post post : posts) {
+//            if (post.getId() == id) {
+//                post.setCategory(category);
+//                post.setChecked(false);
+//            }
+//        }
     }
 
 }

@@ -1,56 +1,52 @@
 package by.feedblog.api.service;
 
 
+import by.feedblog.api.dao.repository.TagRepository;
 import by.feedblog.api.entity.Tag;
-import by.feedblog.api.repository.TagDao;
-import by.feedblog.api.service.exception.IsExistException;
 import by.feedblog.api.service.exception.NotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
+@Transactional
 public class TagService {
 
-    private TagDao tagDao;
-
-    public TagService(TagDao tagDao) {
-        this.tagDao = tagDao;
-    }
-
-    public boolean save(Tag tag){
-        if(tagDao.containsByName(tag.getName())){
-            throw new IsExistException("Tag is exist!", tag.getName(), "save");
-        } else {
-            tagDao.save(tag);
-        }
-        return true;
-    }
+    private TagRepository tagRepository;
 
     public void deleteById(long id){
-        if(tagDao.containsById(id)) tagDao.delete(id);
+        if(tagRepository.existsById(id)) {
+            tagRepository.deleteById(id);
+            return;
+        }
         throw new NotFoundException("Tag with id not found!", String.valueOf(id), "deleteById");
     }
 
     public void deleteByName(String name){
-        if(tagDao.containsByName(name)) tagDao.delete(name);
+        if(tagRepository.existsByName(name)){
+            tagRepository.deleteByName(name);
+            return;
+        }
         throw new NotFoundException("Tag with name not found!", name, "deleteByName");
     }
 
     public List<Tag> getALl(){
-        return tagDao.getAll();
+        return tagRepository.findAll();
     }
 
     public Tag getById(long id){
-        if(tagDao.containsById(id)){
-            return tagDao.getById(id);
+        if(tagRepository.existsById(id)){
+            return tagRepository.findById(id).get();
         }
         throw new NotFoundException("Tag with id not found!", String.valueOf(id), "getById");
     }
 
     public Tag getByName(String name){
-        if(tagDao.containsByName(name)){
-            return tagDao.getByName(name);
+        if(tagRepository.existsByName(name)){
+            return tagRepository.findByName(name);
         }
         throw new NotFoundException("Tag with name not found!", name, "getByName");
     }

@@ -1,4 +1,4 @@
-package by.feedblog.api.repository;
+package by.feedblog.api.dao;
 
 
 import by.feedblog.api.entity.Post;
@@ -13,8 +13,6 @@ public interface ReactionDao {
     void deleteById(int id);
 
     Reaction getById(int id);
-
-    List<Reaction> getAllByPost(Post post);
 
     List<Reaction> getAllByUser(User user);
 

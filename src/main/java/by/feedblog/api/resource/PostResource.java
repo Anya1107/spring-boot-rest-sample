@@ -21,24 +21,68 @@ public class PostResource {
     private TagService tagService;
     private CategoryService categoryService;
     private UserService userService;
-    private CommentService commentService;
+    private LikeService likeService;
 
     public PostResource(PostService postService, TagService tagService, CategoryService categoryService,
-                        UserService userService, CommentService commentService) {
+                        UserService userService, LikeService likeService) {
         this.postService = postService;
         this.tagService = tagService;
         this.categoryService = categoryService;
         this.userService = userService;
-        this.commentService = commentService;
+        this.likeService = likeService;
     }
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody Post post){
-        post.setTag(tagService.getById(post.getTag().getId()));
         post.setCategory(categoryService.getById(post.getCategory().getId()));
         post.setUser(userService.getById(post.getUser().getId()));
         postService.save(post);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/comment")
+    public ResponseEntity<?> comment(@RequestParam String comment, @RequestParam int postId){
+        if(postId <1){
+            throw new InvalidIdException("Invalid id", postId, "saveReaction");
+        }
+        postService.comment(comment, postId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/tag")
+    public ResponseEntity<?> tag(@RequestParam String tag, @RequestParam int postId){
+        if(postId <1){
+            throw new InvalidIdException("Invalid id", postId, "saveReaction");
+        }
+        postService.tag(tag, postId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/like")
+    public ResponseEntity<?> like(@RequestParam int userId, @RequestParam int postId){
+        if(userId < 1){
+            throw new InvalidIdException("Invalid id", userId, "saveReaction");
+        }
+        if(postId <1){
+            throw new InvalidIdException("Invalid id", postId, "saveReaction");
+        }
+        postService.like(userId, postId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/reaction")
+    public ResponseEntity<?> reaction(@RequestParam int userId, @RequestParam int postId, @RequestParam String name){
+        if(userId < 1){
+            throw new InvalidIdException("Invalid id", userId, "saveReaction");
+        }
+        if(postId <1){
+            throw new InvalidIdException("Invalid id", postId, "saveReaction");
+        }
+        if(name.length() < 1){
+            throw new InvalidTitleException("Invalid name", name, "saveReaction");
+        }
+        postService.reaction(userId, postId, name);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/deleteById")
@@ -128,18 +172,6 @@ public class PostResource {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/getAllChecked")
-    public ResponseEntity<?> getAllChecked(){
-        List<Post> allCheckedPosts = postService.getAllCheckedPosts();
-        return new ResponseEntity<>(allCheckedPosts, HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/getAllUnchecked")
-    public ResponseEntity<?> getAllUnchecked(){
-        List<Post> allUncheckedPosts = postService.getAllUncheckedPosts();
-        return new ResponseEntity<>(allUncheckedPosts, HttpStatus.OK);
-    }
-
     @PostMapping(path = "/update")
     public ResponseEntity<?> update(@RequestParam int id, @RequestBody Post post){
         if(id < 1){
@@ -148,7 +180,7 @@ public class PostResource {
         Post byId = postService.getById(id);
         if(byId != null){
             postService.updateDescription(id, post.getDescription());
-            postService.updateTag(id, post.getTag());
+//            postService.updateTag(id, post.getTag());
             postService.updateCategory(id, post.getCategory());
             return new ResponseEntity<>(HttpStatus.OK);
         }

@@ -28,16 +28,9 @@ public class ReactionResource {
     }
 
     @PostMapping(path = "/save")
-    public ResponseEntity<?> save(@RequestParam String reaction, @RequestParam int postId, @RequestParam int userId){
-        if(postId < 1) throw new InvalidIdException("Invalid id", postId, "save");
-        if(userId < 1) throw new InvalidIdException("Invalid id", userId, "save");
-        Post post = postService.getById(postId);
-        User user = userService.getById(userId);
-        if(post != null && user != null){
-            reactionService.add(new Reaction(reaction, user, post));
+    public ResponseEntity<?> save(@RequestParam String reaction){
+            reactionService.add(new Reaction(reaction));
             return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(path = "/delete")
@@ -66,19 +59,6 @@ public class ReactionResource {
     public ResponseEntity<?> getAll(){
         List<Reaction> aLl = reactionService.getALl();
         return new ResponseEntity<>(aLl, HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/getAllByPost")
-    public ResponseEntity<?> getAllByPost(@RequestParam int id){
-        if(id < 1){
-            throw new InvalidIdException("Invalid id", id, "getById");
-        }
-        Post byId = postService.getById(id);
-        if(byId != null){
-            List<Reaction> allByPost = reactionService.getAllByPost(byId);
-            return new ResponseEntity<>(allByPost, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(path = "/getAllByUser")

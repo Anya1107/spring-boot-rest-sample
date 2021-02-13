@@ -1,4 +1,4 @@
-package by.feedblog.api.repository;
+package by.feedblog.api.dao;
 
 import by.feedblog.api.entity.*;
 
@@ -22,10 +22,6 @@ public interface PostDao {
     List<Post> getAllByTag(Tag tag);
 
     List<Post> getAllByCategory(Category category);
-
-    List<Post> getAllChecked();
-
-    List<Post> getAllUnchecked();
 
     boolean containsById(int id);
 

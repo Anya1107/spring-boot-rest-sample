@@ -1,8 +1,7 @@
-package by.feedblog.api.repository.inmemory;
+package by.feedblog.api.dao.inmemory;
 
-import by.feedblog.api.entity.Role;
 import by.feedblog.api.entity.User;
-import by.feedblog.api.repository.UserDao;
+import by.feedblog.api.dao.UserDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

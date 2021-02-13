@@ -1,12 +1,9 @@
 package by.feedblog.api.resource;
 
 import by.feedblog.api.entity.Dislike;
-import by.feedblog.api.entity.Like;
 import by.feedblog.api.entity.Post;
 import by.feedblog.api.entity.User;
-import by.feedblog.api.repository.DislikeDao;
 import by.feedblog.api.service.DislikeService;
-import by.feedblog.api.service.LikeService;
 import by.feedblog.api.service.PostService;
 import by.feedblog.api.service.UserService;
 import by.feedblog.api.service.exception.InvalidIdException;
@@ -29,19 +26,6 @@ public class DislikeResource {
         this.userService = userService;
     }
 
-    @PostMapping(path = "/save")
-    public ResponseEntity<?> save(@RequestParam int postId, @RequestParam int userId){
-        if(postId < 1) throw new InvalidIdException("Invalid id", postId, "save");
-        if(userId < 1) throw new InvalidIdException("Invalid id", userId, "save");
-        Post post = postService.getById(postId);
-        User user = userService.getById(userId);
-        if(post != null && user != null){
-            dislikeService.add(new Dislike(user, post));
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
     @DeleteMapping(path = "/deleteById")
     public ResponseEntity<?> deleteById(@RequestParam int id){
         if(id < 1){
@@ -52,6 +36,16 @@ public class DislikeResource {
             dislikeService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(path = "/getById")
+    public ResponseEntity<?> getById(@RequestParam int id){
+        if(id < 1){
+            throw new InvalidIdException("Invalid id", id, "deleteById");
+        }
+        Dislike byId = dislikeService.getById(id);
+        if(byId != null) return new ResponseEntity<>(byId, HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -68,17 +62,6 @@ public class DislikeResource {
         if (byId != null) {
             List<Dislike> allByUser = dislikeService.getAllByUser(byId);
             return new ResponseEntity<>(allByUser, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @GetMapping(path = "/getAllByPost")
-    public ResponseEntity<?> getAllByPost(@RequestParam int id){
-        if(id < 1) throw new InvalidIdException("Invalid id", id, "getAllByPost");
-        Post byId = postService.getById(id);
-        if(byId != null){
-            List<Dislike> aLlByPost = dislikeService.getAllByPost(byId);
-            return new ResponseEntity<>(aLlByPost, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

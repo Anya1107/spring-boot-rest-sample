@@ -1,4 +1,4 @@
-package by.feedblog.api.repository;
+package by.feedblog.api.dao;
 
 import by.feedblog.api.entity.Like;
 import by.feedblog.api.entity.Post;
@@ -7,7 +7,6 @@ import by.feedblog.api.entity.User;
 import java.util.List;
 
 public interface LikeDao {
-    void add(Like like);
 
     void deleteById(int id);
 
@@ -17,9 +16,7 @@ public interface LikeDao {
 
     List<Like> getAllByUser(User user);
 
-    List<Like> getAllByPost(Post post);
-
-    boolean contains(User user, Post post);
+    boolean contains(User user);
 
     boolean containsById(int id);
 }

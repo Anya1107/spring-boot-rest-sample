@@ -24,9 +24,9 @@ public class TokenInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (Boolean.parseBoolean(isEnabled)){
             String header = request.getHeader("X-Blog-Token");
-            if (userService.validToken(header)) {
-                return true;
-            }
+//            if (userService.validToken(header)) {
+//                return true;
+//            }
             response.sendError(401);
             return false;
         } else {

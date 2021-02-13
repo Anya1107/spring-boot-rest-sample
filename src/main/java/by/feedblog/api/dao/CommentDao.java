@@ -1,15 +1,13 @@
-package by.feedblog.api.repository;
+package by.feedblog.api.dao;
 
 
 
 import by.feedblog.api.entity.Comment;
-import by.feedblog.api.entity.Post;
 import by.feedblog.api.entity.User;
 
 import java.util.List;
 
 public interface CommentDao {
-    void save(Comment comment);
 
     void deleteById(int id);
 

@@ -1,109 +1,177 @@
 package by.feedblog.api.service;
 
-
+import by.feedblog.api.dao.repository.*;
 import by.feedblog.api.entity.*;
-import by.feedblog.api.repository.CommentDao;
-import by.feedblog.api.repository.DislikeDao;
-import by.feedblog.api.repository.LikeDao;
-import by.feedblog.api.repository.PostDao;
 import by.feedblog.api.service.exception.IsExistException;
 import by.feedblog.api.service.exception.NotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class PostService {
 
-    private PostDao postDao;
-    private CommentDao commentDao;
-    private LikeDao likeDao;
-    private DislikeDao dislikeDao;
+    private PostRepository postRepository;
+    private UserRepository userRepository;
+    private TagRepository tagRepository;
+    private LikeRepository likeRepository;
+    private DislikeRepository dislikeRepository;
+    private ReactionRepository reactionRepository;
 
-    public PostService(PostDao postDao, CommentDao commentDao, LikeDao likeDao, DislikeDao dislikeDao) {
-        this.postDao = postDao;
-        this.commentDao = commentDao;
-        this.likeDao = likeDao;
-        this.dislikeDao = dislikeDao;
-    }
-
-    public boolean save(Post post){
-        if(postDao.containsByTitle(post.getTitle())){
+    public boolean save(Post post) {
+        if (postRepository.existsByTitle(post.getTitle())) {
             throw new IsExistException("Post is exist!", post.getTitle(), "save");
         } else {
-            postDao.save(post);
+            postRepository.save(post);
         }
         return true;
     }
 
-    public void deleteById(int id){
-        if(postDao.containsById(id)){
-            postDao.deleteById(id);
+    public void comment(String comment, int postId) {
+        if(!postRepository.existsById(postId)){
+            throw new NotFoundException("Post with id is not found", String.valueOf(postId), "saveReaction");
+        }
+        Post post = postRepository.getOne(postId);
+        List<Comment> comments = post.getComments();
+        comments.add(new Comment(comment));
+        postRepository.save(post);
+    }
+
+    public void tag(String tag, int postId) {
+        if(!postRepository.existsById(postId)){
+            throw new NotFoundException("Post with id is not found", String.valueOf(postId), "saveReaction");
+        }
+        Post post = postRepository.getOne(postId);
+        List<Tag> tags = post.getTag();
+        if (tagRepository.existsByName(tag)) {
+            throw new IsExistException("Tag is exist!", tag, "saveTag");
+        } else {
+            tags.add(new Tag(tag));
+            postRepository.save(post);
+        }
+    }
+
+    public void like(int userId, int postId) {
+        if(!postRepository.existsById(postId)){
+            throw new NotFoundException("Post with id is not found", String.valueOf(postId), "saveReaction");
+        }
+        if(!userRepository.existsById(userId)){
+            throw new NotFoundException("User with id is not found", String.valueOf(userId), "saveReaction");
+        }
+        Post post = postRepository.getOne(postId);
+        User user = userRepository.getOne(userId);
+        List<Like> likes = post.getLikes();
+        List<Dislike> dislikes = post.getDislikes();
+        if (likeRepository.existsByUserAndPost(user, post)) {
+            if (!dislikeRepository.existsByUserAndPost(user, post)) {
+                dislikes.add(new Dislike(user, post));
+            }
+        } else {
+            likes.add(new Like(user, post));
+        }
+        postRepository.save(post);
+    }
+
+    public void dislike(int userId, int postId) {
+        if(!postRepository.existsById(postId)){
+            throw new NotFoundException("Post with id is not found", String.valueOf(postId), "saveReaction");
+        }
+        if(!userRepository.existsById(userId)){
+            throw new NotFoundException("User with id is not found", String.valueOf(userId), "saveReaction");
+        }
+        Post post = postRepository.getOne(postId);
+        User user = userRepository.getOne(userId);
+        List<Dislike> dislikes = post.getDislikes();
+        dislikes.add(new Dislike(user, post));
+        postRepository.save(post);
+    }
+
+    public void reaction(int userId, int postId, String name) {
+        if(!postRepository.existsById(postId)){
+            throw new NotFoundException("Post with id is not found", String.valueOf(postId), "saveReaction");
+        }
+        if(!userRepository.existsById(userId)){
+            throw new NotFoundException("User with id is not found", String.valueOf(userId), "saveReaction");
+        }
+        Post post = postRepository.getOne(postId);
+        User user = userRepository.getOne(userId);
+        List<Reaction> reactions = post.getReactions();
+        Reaction e = new Reaction(name, user);
+        if (reactions.contains(e)) {
+            throw new IsExistException("Reaction with user and name is exist!", user.getFullName(), "saveReaction");
+        } else {
+            reactions.add(e);
+            postRepository.save(post);;
+        }
+    }
+
+    public void deleteById(int id) {
+        if (postRepository.existsById(id)) {
+            postRepository.deleteById(id);
+            return;
         }
         throw new NotFoundException("Post with id not found!", String.valueOf(id), "deleteById");
     }
 
-    public void deleteByTitle(String title){
-        if(postDao.containsByTitle(title)){
-            postDao.deleteByTitle(title);
+    public void deleteByTitle(String title) {
+        if (postRepository.existsByTitle(title)) {
+            postRepository.deleteByTitle(title);
+            return;
         }
         throw new NotFoundException("Post with title not found!", title, "deleteByTitle");
     }
 
-    public List<Post> getAll(){
-        return postDao.getAll();
+    public List<Post> getAll() {
+        return postRepository.findAll();
     }
 
-    public Post getById(int id){
-        if(postDao.containsById(id)){
-            Post byId = postDao.getById(id);
-            byId.setComments(commentDao.getAllByPostId(id));
-            byId.setLikes(likeDao.getAllByPost(byId));
-            byId.setDislikes(dislikeDao.getAllByPost(byId));
+    public Post getById(int id) {
+        if (postRepository.existsById(id)) {
+            Post byId = postRepository.findById(id).get();
+//            byId.setComments(commentRepository.findAllByPost(id));
+//            byId.setLikes(likeRepository.findAllByPost(byId));
+//            byId.setDislikes(dislikeRepository.findAllByPost(byId));
             return byId;
         }
         throw new NotFoundException("Post with id not found!", String.valueOf(id), "getById");
     }
 
-    public Post getByTitle(String title){
-        if(postDao.containsByTitle(title)){
-            return postDao.getByTitle(title);
+    public Post getByTitle(String title) {
+        if (postRepository.existsByTitle(title)) {
+            return postRepository.findByTitle(title);
         }
         throw new NotFoundException("Post with title not found!", title, "getByTitle");
     }
 
-    public List<Post> getAllCheckedPosts(){
-        return postDao.getAllChecked();
+    public List<Post> getAllByUser(User user) {
+        return postRepository.findAllByUser(user);
     }
 
-    public List<Post> getAllUncheckedPosts(){
-        return postDao.getAllUnchecked();
+    public List<Post> getAllByTag(Tag tag) {
+        return postRepository.findAllByTag(tag);
     }
 
-    public List<Post> getAllByUser(User user){
-        return postDao.getAllByUser(user);
+    public List<Post> getAllByCategory(Category category) {
+        return postRepository.findAllByCategory(category);
     }
 
-    public List<Post> getAllByTag(Tag tag){
-        return postDao.getAllByTag(tag);
+    public void updateDescription(int id, String description) {
+        if (!postRepository.existsById(id)) {
+            throw new NotFoundException("Post with id not found!", String.valueOf(id), "update");
+        }
+        Post post = postRepository.findById(id).get();
+        post.setDescription(description);
+        postRepository.save(post);
     }
 
-    public List<Post> getAllByCategory(Category category){
-        return postDao.getAllByCategory(category);
-    }
-
-    public void updateDescription(int id, String description){
-        if(!postDao.containsById(id)) throw new NotFoundException("Post with id not found!", String.valueOf(id), "update");
-        postDao.updateDescription(id, description);
-    }
-
-    public void updateTag(int id, Tag tag){
-        if(!postDao.containsById(id)) throw new NotFoundException("Post with id not found!", String.valueOf(id), "update");
-        postDao.updateTag(id, tag);
-    }
-
-    public void updateCategory(int id, Category category){
-        if(!postDao.containsById(id)) throw new NotFoundException("Post with id not found!", String.valueOf(id), "update");
-        postDao.updateCategory(id, category);
+    public void updateCategory(int id, Category category) {
+        if (!postRepository.existsById(id)) {
+            throw new NotFoundException("Post with id not found!", String.valueOf(id), "update");
+        }
+        Post post = postRepository.findById(id).get();
+        post.setCategory(category);
+        postRepository.save(post);
     }
 }

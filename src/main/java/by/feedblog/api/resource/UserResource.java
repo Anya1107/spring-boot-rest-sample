@@ -2,6 +2,7 @@ package by.feedblog.api.resource;
 
 import by.feedblog.api.entity.User;
 import by.feedblog.api.service.UserService;
+import by.feedblog.api.service.exception.InvalidIdException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,14 @@ public class UserResource {
     public ResponseEntity<?> save(@Valid @RequestBody User user){
         if (userService.registration(user)) return new ResponseEntity<>(HttpStatus.CREATED);
         return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @PostMapping(path = "/bookmark")
+    public ResponseEntity<?> bookmark(@RequestParam int userId, int postId){
+        if(postId < 1) throw new InvalidIdException("Invalid id", postId, "save");
+        if(userId < 1) throw new InvalidIdException("Invalid id", userId, "save");
+        userService.bookmark(userId, postId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/deleteById")
@@ -74,9 +83,9 @@ public class UserResource {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/authorization")
-    public ResponseEntity<String> authorization(@RequestParam String login, @RequestParam String password){
-        String uuid = userService.authorization(login, password);
-        return new ResponseEntity<>(uuid, HttpStatus.OK);
-    }
+//    @GetMapping(path = "/authorization")
+//    public ResponseEntity<String> authorization(@RequestParam String login, @RequestParam String password){
+//        String uuid = userService.authorization(login, password);
+//        return new ResponseEntity<>(uuid, HttpStatus.OK);
+//    }
 }

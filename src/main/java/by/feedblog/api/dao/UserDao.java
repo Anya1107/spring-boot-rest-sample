@@ -1,6 +1,5 @@
-package by.feedblog.api.repository;
+package by.feedblog.api.dao;
 
-import by.feedblog.api.entity.Bookmark;
 import by.feedblog.api.entity.User;
 
 import java.util.List;

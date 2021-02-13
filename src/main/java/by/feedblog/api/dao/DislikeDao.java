@@ -1,7 +1,6 @@
-package by.feedblog.api.repository;
+package by.feedblog.api.dao;
 
 import by.feedblog.api.entity.Dislike;
-import by.feedblog.api.entity.Like;
 import by.feedblog.api.entity.Post;
 import by.feedblog.api.entity.User;
 
@@ -18,9 +17,7 @@ public interface DislikeDao {
 
     List<Dislike> getAllByUser(User user);
 
-    List<Dislike> getAllByPost(Post post);
-
-    boolean contains(User user, Post post);
+    boolean contains(User user);
 
     boolean containsById(int id);
 }

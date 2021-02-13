@@ -1,4 +1,4 @@
-package by.feedblog.api.repository;
+package by.feedblog.api.dao;
 
 
 

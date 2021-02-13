@@ -1,13 +1,13 @@
-package by.feedblog.api.repository.inmemory;
+package by.feedblog.api.dao.inmemory;
 
 import by.feedblog.api.entity.Category;
-import by.feedblog.api.repository.CategoryDao;
+import by.feedblog.api.dao.CategoryDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+
 public class InMemoryCategoryDao implements CategoryDao {
     private final List<Category> categories = new ArrayList<>();
     private static int incId = 1;

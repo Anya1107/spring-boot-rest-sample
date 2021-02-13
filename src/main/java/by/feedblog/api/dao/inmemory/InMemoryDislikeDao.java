@@ -1,16 +1,15 @@
-package by.feedblog.api.repository.inmemory;
+package by.feedblog.api.dao.inmemory;
 
 import by.feedblog.api.entity.Dislike;
-import by.feedblog.api.entity.Like;
 import by.feedblog.api.entity.Post;
 import by.feedblog.api.entity.User;
-import by.feedblog.api.repository.DislikeDao;
+import by.feedblog.api.dao.DislikeDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+
 public class InMemoryDislikeDao implements DislikeDao {
     private List<Dislike> dislikes = new ArrayList<>();
     private static int incId = 1;
@@ -56,20 +55,9 @@ public class InMemoryDislikeDao implements DislikeDao {
     }
 
     @Override
-    public List<Dislike> getAllByPost(Post post) {
-        List<Dislike> dislikeList = new ArrayList<>();
+    public boolean contains(User user) {
         for (Dislike dislike : dislikes) {
-            if(dislike.getPost().equals(post)){
-                dislikeList.add(dislike);
-            }
-        }
-        return dislikeList;
-    }
-
-    @Override
-    public boolean contains(User user, Post post) {
-        for (Dislike dislike : dislikes) {
-            if(dislike.getPost().equals(post) && dislike.getUser().equals(user)) return true;
+            if( dislike.getUser().equals(user)) return true;
         }
         return false;
     }

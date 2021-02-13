@@ -1,15 +1,15 @@
-package by.feedblog.api.repository.inmemory;
+package by.feedblog.api.dao.inmemory;
 
 import by.feedblog.api.entity.Post;
 import by.feedblog.api.entity.Reaction;
 import by.feedblog.api.entity.User;
-import by.feedblog.api.repository.ReactionDao;
+import by.feedblog.api.dao.ReactionDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+//@Repository
 public class InMemoryReactionDao implements ReactionDao {
     private List<Reaction> reactions = new ArrayList<>();
     private static int incId  = 1;
@@ -38,16 +38,6 @@ public class InMemoryReactionDao implements ReactionDao {
         return null;
     }
 
-    @Override
-    public List<Reaction> getAllByPost(Post post) {
-        List<Reaction> reactionList = new ArrayList<>();
-        for (Reaction reaction : reactions) {
-            if(reaction.getPost().equals(post)){
-                reactionList.add(reaction);
-            }
-        }
-        return reactionList;
-    }
 
     @Override
     public List<Reaction> getAllByUser(User user) {

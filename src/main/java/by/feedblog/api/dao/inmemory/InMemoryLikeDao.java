@@ -1,24 +1,18 @@
-package by.feedblog.api.repository.inmemory;
+package by.feedblog.api.dao.inmemory;
 
 import by.feedblog.api.entity.Like;
 import by.feedblog.api.entity.Post;
 import by.feedblog.api.entity.User;
-import by.feedblog.api.repository.LikeDao;
+import by.feedblog.api.dao.LikeDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+//@Repository
 public class InMemoryLikeDao implements LikeDao {
     private List<Like> likes = new ArrayList<>();
     private static int incId = 1;
-
-    @Override
-    public void add(Like like) {
-        like.setId(incId++);
-        likes.add(like);
-    }
 
     @Override
     public void deleteById(int id) {
@@ -55,20 +49,9 @@ public class InMemoryLikeDao implements LikeDao {
     }
 
     @Override
-    public List<Like> getAllByPost(Post post) {
-        List<Like> likeList = new ArrayList<>();
+    public boolean contains(User user) {
         for (Like like : likes) {
-            if(like.getPost().equals(post)){
-                likeList.add(like);
-            }
-        }
-        return likeList;
-    }
-
-    @Override
-    public boolean contains(User user, Post post) {
-        for (Like like : likes) {
-            if(like.getPost().equals(post) && like.getUser().equals(user)) return true;
+            if( like.getUser().equals(user)) return true;
         }
         return false;
     }

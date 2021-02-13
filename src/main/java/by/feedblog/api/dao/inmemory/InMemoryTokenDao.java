@@ -1,13 +1,13 @@
-package by.feedblog.api.repository.inmemory;
+package by.feedblog.api.dao.inmemory;
 
-import by.feedblog.api.repository.TokenDao;
+import by.feedblog.api.dao.TokenDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
+//@Repository
 public class InMemoryTokenDao implements TokenDao {
     private List<UUID> uuids = new ArrayList<>();
 

@@ -27,14 +27,6 @@ public class CommentResource {
         this.userService = userService;
     }
 
-    @PostMapping(path = "/save")
-    public ResponseEntity<?> save(@Valid @RequestBody Comment comment){
-        comment.setPost(postService.getById(comment.getPost().getId()));
-        comment.setUser(userService.getById(comment.getUser().getId()));
-        commentService.save(comment);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @DeleteMapping(path = "/delete")
     public ResponseEntity<?> deleteById(@RequestParam int id){
         if(id < 1){
@@ -63,29 +55,29 @@ public class CommentResource {
         return new ResponseEntity<>(all, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/getAllByPostId")
-    public ResponseEntity<?> getAllByPost(@RequestParam int postId){
-        if(postId < 1){
-            throw new InvalidIdException("Invalid id", postId, "getAllByPost");
-        }
-        Post byId = postService.getById(postId);
-        if(byId != null){
-            List<Comment> allByPost = commentService.getAllByPostId(postId);
-            return new ResponseEntity<>(allByPost, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @GetMapping(path = "/getAllByUser")
-    public ResponseEntity<?> getAllByUser(@RequestParam int userId){
-        if(userId < 1){
-            throw new InvalidIdException("Invalid id", userId, "getById");
-        }
-        User byId = userService.getById(userId);
-        if(byId != null){
-            List<Comment> allByUser = commentService.getAllByUser(byId);
-            return new ResponseEntity<>(allByUser, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+//    @GetMapping(path = "/getAllByPostId")
+//    public ResponseEntity<?> getAllByPost(@RequestParam int postId){
+//        if(postId < 1){
+//            throw new InvalidIdException("Invalid id", postId, "getAllByPost");
+//        }
+//        Post byId = postService.getById(postId);
+//        if(byId != null){
+//            List<Comment> allByPost = commentService.getAllByPostId(postId);
+//            return new ResponseEntity<>(allByPost, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
+//
+//    @GetMapping(path = "/getAllByUser")
+//    public ResponseEntity<?> getAllByUser(@RequestParam int userId){
+//        if(userId < 1){
+//            throw new InvalidIdException("Invalid id", userId, "getById");
+//        }
+//        User byId = userService.getById(userId);
+//        if(byId != null){
+//            List<Comment> allByUser = commentService.getAllByUser(byId);
+//            return new ResponseEntity<>(allByUser, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 }

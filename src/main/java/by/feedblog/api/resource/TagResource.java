@@ -20,12 +20,6 @@ public class TagResource {
         this.tagService = tagService;
     }
 
-    @PostMapping(path = "/save")
-    public ResponseEntity<?> save(@Valid @RequestBody Tag tag){
-        tagService.save(tag);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @DeleteMapping(path = "/deleteById")
     public ResponseEntity<?> deleteById(@RequestParam long id){
         if(tagService.getById(id) != null){

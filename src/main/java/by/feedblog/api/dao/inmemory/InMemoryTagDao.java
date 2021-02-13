@@ -1,13 +1,13 @@
-package by.feedblog.api.repository.inmemory;
+package by.feedblog.api.dao.inmemory;
 
 import by.feedblog.api.entity.Tag;
-import by.feedblog.api.repository.TagDao;
+import by.feedblog.api.dao.TagDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+//@Repository
 public class InMemoryTagDao implements TagDao {
     private final List<Tag> tags = new ArrayList<>();
     private static long incId = 1;

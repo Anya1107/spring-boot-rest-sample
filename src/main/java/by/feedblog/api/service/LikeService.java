@@ -1,55 +1,40 @@
 package by.feedblog.api.service;
 
 
+import by.feedblog.api.dao.repository.LikeRepository;
 import by.feedblog.api.entity.Like;
-import by.feedblog.api.entity.Post;
 import by.feedblog.api.entity.User;
-import by.feedblog.api.repository.LikeDao;
 import by.feedblog.api.service.exception.IsExistException;
 import by.feedblog.api.service.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class LikeService {
 
-    @Autowired
-    private LikeDao likeDao;
-
-    public LikeService(LikeDao likeDao) {
-        this.likeDao = likeDao;
-    }
-
-    public boolean add(Like like){
-        if (likeDao.contains(like.getUser(), like.getPost())) {
-            throw new IsExistException("Like is exist!", like.getPost().getTitle(), "save");
-        } else {
-            likeDao.add(like);
-            return true;
-        }
-    }
+    private LikeRepository likeRepository;
 
     public void deleteById(int id){
-        if(likeDao.containsById(id)) likeDao.deleteById(id);
+        if(likeRepository.existsById(id)){
+            likeRepository.deleteById(id);
+            return;
+        }
         throw new NotFoundException("Like with id not found!", String.valueOf(id), "deleteById");
     }
 
     public Like getById(int id){
-        if(likeDao.containsById(id)) return likeDao.getById(id);
+        if(likeRepository.existsById(id)) return likeRepository.findById(id).get();
         throw new NotFoundException("Like with id not found!", String.valueOf(id), "getById");
     }
 
     public List<Like> getAll(){
-        return likeDao.getAll();
+        return likeRepository.findAll();
     }
 
     public List<Like> getAllByUser(User user){
-        return likeDao.getAllByUser(user);
-    }
-
-    public List<Like> getALlByPost(Post post){
-        return likeDao.getAllByPost(post);
+        return likeRepository.findAllByUser(user);
     }
 }

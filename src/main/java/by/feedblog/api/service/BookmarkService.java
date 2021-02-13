@@ -1,44 +1,47 @@
 package by.feedblog.api.service;
 
+import by.feedblog.api.dao.repository.BookmarkRepository;
 import by.feedblog.api.entity.Bookmark;
 import by.feedblog.api.entity.User;
-import by.feedblog.api.repository.BookmarkDao;
 import by.feedblog.api.service.exception.IsExistException;
 import by.feedblog.api.service.exception.NotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
+@Transactional
 public class BookmarkService {
-    private BookmarkDao bookmarkDao;
-
-    public BookmarkService(BookmarkDao bookmarkDao) {
-        this.bookmarkDao = bookmarkDao;
-    }
+    private BookmarkRepository bookmarkRepository;
 
     public void add(Bookmark bookmark){
-        if(bookmarkDao.containsByPost(bookmark.getPost())){
+        if(bookmarkRepository.existsByPost(bookmark.getPost())){
             throw new IsExistException("Bookmark is exist!", bookmark.getPost().getTitle(), "save");
         }
-        bookmarkDao.add(bookmark);
+        bookmarkRepository.save(bookmark);
     }
 
     public void deleteById(int id){
-        if(bookmarkDao.containsById(id)) bookmarkDao.deleteById(id);
+        if(bookmarkRepository.existsById(id)){
+            bookmarkRepository.deleteById(id);
+            return;
+        }
         throw new NotFoundException("Bookmark with id not found!", String.valueOf(id), "deleteById");
     }
 
     public Bookmark getById(int id){
-        if(bookmarkDao.containsById(id)) return bookmarkDao.getById(id);
+        if(bookmarkRepository.existsById(id)) return bookmarkRepository.findById(id).get();
         throw new NotFoundException("Bookmark with id not found!", String.valueOf(id), "getById");
     }
 
     public List<Bookmark> getAll(){
-        return bookmarkDao.getAll();
+        return bookmarkRepository.findAll();
     }
 
     public List<Bookmark> getAllByUser(User user){
-        return bookmarkDao.getAllByUser(user);
+        return bookmarkRepository.findAllByUser(user);
     }
 }

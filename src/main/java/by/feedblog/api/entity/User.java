@@ -5,21 +5,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
-import java.awt.print.Book;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotBlank
-    @Length(min = 3)
+    @Length(min = 3, max = 10)
     private String username;
 
     @NotBlank
@@ -27,7 +30,7 @@ public class User {
     private String password;
 
     @NotBlank
-    @Length(min = 3)
+    @Length(min = 3, max = 10)
     private String fullName;
 
     @NotNull
@@ -37,6 +40,7 @@ public class User {
     @NotNull
     private Role role;
 
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks;
 
     public User(String username, String password, String fullName, int age) {
