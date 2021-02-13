@@ -56,6 +56,13 @@ public class Post implements Comparable<Post> {
 
     private Date date;
 
+    public Post(@NotBlank @Length(min = 3, max = 10) String title, @NotBlank @Length(min = 4, max = 100) String description, Category category, User user) {
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.user = user;
+    }
+
     @Override
     public int compareTo(Post o) {
         return this.getDate().compareTo(o.getDate());
